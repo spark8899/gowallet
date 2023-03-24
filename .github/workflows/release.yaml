@@ -2,7 +2,9 @@
 name: Build Release
 
 on:
-  push: # push commit
+  push:
+    tags:
+      - '*'
 
 env:
   APP_NAME: hdwallet
@@ -22,6 +24,13 @@ jobs:
         uses: actions/setup-go@v3 # setting golang
         with:
           go-version: ${{ env.GO_VERSION }} # request go version
+      
+      - name: Get tag name
+        id: tag_name
+        shell: bash
+        run: |
+          r = $(echo ${{ github.ref }} | rev | cut -d '/' -f 1 | rev)
+          echo "TAG_NAME=$r" >> $GITHUB_OUTPUT
 
       - name: Build-linux_amd64
         run: go build -o release/${{ env.APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
@@ -46,12 +55,10 @@ jobs:
 
       - name: Create Release
         uses: svenstaro/upload-release-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
           file: release/*
           overwrite: true
           file_glob: true
-          body: "This is my release text"
+          body: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
