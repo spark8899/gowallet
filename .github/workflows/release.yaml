@@ -5,6 +5,7 @@ on:
   push: # push commit
 
 env:
+  APP_NAME: hdwallet
   GO_VERSION: 1.20.x
   GOCACHE: /home/runner/work/go/pkg/build
   GOPATH: /home/runner/work/go
@@ -23,23 +24,34 @@ jobs:
           go-version: ${{ env.GO_VERSION }} # request go version
 
       - name: Build-linux_amd64
-        run: go build -o gowallet_linux_amd64 main.go > ${{ github.workspace }}-BUILDLOG.txt
+        run: go build -o release/${{ APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
+      - name: Create_linux_amd64_md5
+        run: md5sum ${{ APP_NAME }}_linux_amd64 | cut -d ' ' -f 1 > release/${{ APP_NAME }}_linux_amd64.md5
+      - name: Create_linux_amd64_sha256
+        run: sha256sum ${{ APP_NAME }}_linux_amd64 | cut -d ' ' -f 1 > release/${{ APP_NAME }}_linux_amd64.sha256
+
       - name: Build-windows_amd64
-        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o gowallet_windows_amd64.exe main.go >> ${{ github.workspace }}-BUILDLOG.txt
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o release/${{ APP_NAME }}_windows_amd64.exe main.go > ${{ github.workspace }}_windows_amd64-BUILDLOG.txt
+      - name: Create_windows_amd64_md5
+        run: md5sum ${{ APP_NAME }}_windows_amd64 | cut -d ' ' -f 1 > release/${{ APP_NAME }}_windows_amd64.md5
+      - name: Create_windows_amd64_sha256
+        run: sha256sum ${{ APP_NAME }}_windows_amd64 | cut -d ' ' -f 1 > release/${{ APP_NAME }}_windows_amd64.sha256
+
       - name: Build-drawin_amd64
-        run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o gowallet_darwin_amd64 main.go >> ${{ github.workspace }}-BUILDLOG.txt
+        run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o release/${{ APP_NAME }}_darwin_amd64 main.go >> ${{ github.workspace }}_drawin_amd64-BUILDLOG.txt
+      - name: Create_drawin_amd64_md5
+        run: md5sum ${{ APP_NAME }}_drawin_amd64 | cut -d ' ' -f 1 > release/${{ APP_NAME }}_drawin_amd64.md5
+      - name: Create_drawin_amd64_sha256
+        run: sha256sum ${{ APP_NAME }}_drawin_amd64 | cut -d ' ' -f 1 > release/${{ APP_NAME }}_drawin_amd64.sha256
 
       - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+        uses: svenstaro/upload-release-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with: # upload release files
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-          files: |
-            gowallet_linux_amd64
-            gowallet_windows_amd64.exe
-            gowallet_darwin_amd64
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          files: release/*
+          overwrite: true
+          file_glob: true
+          body: "This is my release text"
