@@ -1,0 +1,29 @@
+name: hdwallet build and test
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+env:
+  GO_VERSION: 1.20.x
+  GOCACHE: /home/runner/work/go/pkg/build
+  GOPATH: /home/runner/work/go
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up go
+      uses: actions/checkout@v2
+      with:
+          go-version: ${{ env.GO_VERSION }}
+    
+    - name: Check out source
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: make build
