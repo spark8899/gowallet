@@ -10,7 +10,7 @@ go build main.go -o gowallet
 create private key
 ```
 ./gowallet genPrivateKey
-63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
+0xC49926C4124cEe1cbA0Ea94Ea31a6c12318df947:0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
 ./gowallet genPrivateKey -n 10 # Create 10 private keys
 xxxxx
 ..
@@ -18,13 +18,13 @@ xxxxx
 
 get public key from private key
 ```
-./gowallet getPublicKey -k 63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
+./gowallet getPublicKey -k 0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
 0x046005c86a6718f66221713a77073c41291cc3abbfcd03aa4955e9b2b50dbf7f9b6672dad0d46ade61e382f79888a73ea7899d9419becf1d6c9ec2087c1188fa18
 ```
 
 get eth address from private key
 ```
-./gowallet getEthAddress -k 63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
+./gowallet getEthAddress -k 0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
 0xC49926C4124cEe1cbA0Ea94Ea31a6c12318df947
 ```
 

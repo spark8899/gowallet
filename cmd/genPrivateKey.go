@@ -21,7 +21,7 @@ var genPrivateKeyCmd = &cobra.Command{
 }
 
 var getEthAddressCmd = &cobra.Command{
-	Use:   "getAddress",
+	Use:   "getEthAddress",
 	Short: "input privateKey and get address",
 	Long:  "this command is get address from privateKey.",
 	Run: func(cmd *cobra.Command, args []string) {
