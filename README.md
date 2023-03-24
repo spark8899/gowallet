@@ -32,7 +32,7 @@ get eth address from private key
 create mnemonic
 ```
 ./gowallet genMnemonic
-tag volcano eight thank tide danger coast health above argue embrace heavy'
+tag volcano eight thank tide danger coast health above argue embrace heavy
 ./gowallet genMnemonic -s 24
 xxx xx xxx ..
 ```
