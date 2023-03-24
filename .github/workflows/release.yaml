@@ -29,7 +29,7 @@ jobs:
         id: tag_name
         shell: bash
         run: |
-          r = $(echo ${{ github.ref }} | rev | cut -d '/' -f 1 | rev)
+          r=$(echo ${{ github.ref }} | rev | cut -d '/' -f 1 | rev)
           echo "TAG_NAME=$r" >> $GITHUB_OUTPUT
 
       - name: Build-linux_amd64
