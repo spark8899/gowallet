@@ -1,6 +1,7 @@
 package hdwallet
 
 import (
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 
@@ -16,20 +17,17 @@ func MnemonicFromSeed(seedStr string) (string, error) {
 		return "seed str to bytes", err
 	}
 
-	// create BIO32 master key
-	masterKey, err := bip32.NewMasterKey(seed)
-	if err != nil {
-		fmt.Println("seed to masterKey error")
-		return "seed to masterKey", err
-	}
+	//将种子转换为主私钥
+	masterKey01, _ := bip32.NewMasterKey(seed)
 
-	// from master key to mnemonic
-	mnemonic, err := bip39.NewMnemonic(masterKey.Key)
-	if err != nil {
-		fmt.Println("masterKey to mnemonic error")
-		return "masterKey to mnemonic", err
-	}
+	//对seed进行SHA-256哈希
+	hashedSeed := sha256.Sum256(seed)
 
-	//fmt.Println("Mnemonic:", mnemonic)
+	//将熵转换为助记词
+	mnemonic, _ := bip39.NewMnemonic(masterKey01.Key)
+
+	fmt.Println("hashedSeed: ", hashedSeed)
+	fmt.Println("Mnemonic: ", mnemonic)
+	// fmt.Println("Mnemonic:", mnemonic)
 	return mnemonic, nil
 }

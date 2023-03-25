@@ -53,12 +53,21 @@ jobs:
       - name: Create_drawin_amd64_sha256
         run: sha256sum ${{ env.APP_NAME }}_drawin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_drawin_amd64.sha256
 
-      - name: Create Release
-        uses: svenstaro/upload-release-action@v2
+      #- name: Create Release
+      #  uses: svenstaro/upload-release-action@v2
+      #  with:
+      #    repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #    tag: ${{ github.ref }}
+      #    file: release/*
+      #    overwrite: true
+      #    file_glob: true
+      #    body: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
+
+      - name: Upload files to release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref }}
-          file: release/*
-          overwrite: true
-          file_glob: true
-          body: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
+          tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
+          body_path: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
+          files: release/*
