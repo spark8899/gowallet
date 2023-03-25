@@ -1,6 +1,7 @@
 package hdwallet
 
 import (
+	"crypto/ecdsa"
 	"encoding/hex"
 	"fmt"
 
@@ -53,5 +54,15 @@ func PathFromSeed(seedStr string, pathStr string) (string, error) {
 		return "", err
 	}
 
-	return hexutil.Encode(crypto.FromECDSA(privateKeyECDSA)), nil
+	// get eth address
+	publicKey := privateKeyECDSA.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		fmt.Println("Unable to get public key")
+		return "", err
+	}
+	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
+
+	info := fmt.Sprintf("%v:%v", address, hexutil.Encode(crypto.FromECDSA(privateKeyECDSA)))
+	return info, nil
 }

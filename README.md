@@ -2,7 +2,9 @@
 golang wallet tools
 
 # build
-go build main.go -o gowallet
+```
+go build -o gowallet main.go
+```
 
 # running
 

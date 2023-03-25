@@ -61,11 +61,11 @@ var getPathCmd = &cobra.Command{
 		}
 
 		if mnemonicStr != "" {
-			privateKeyInfo, err := hdwallet.PathFromMnemonic(mnemonicStr, path)
+			KeyInfo, err := hdwallet.PathFromMnemonic(mnemonicStr, path)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(privateKeyInfo)
+			fmt.Println(KeyInfo)
 		}
 
 		if seedStr != "" {
