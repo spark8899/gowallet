@@ -24,7 +24,6 @@ env:
 jobs:
   release:
     #if: startsWith(github.ref, 'refs/tags/') # create tags.
-    #if: ${{ inputs.print_tags }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -34,44 +33,27 @@ jobs:
         uses: actions/setup-go@v3 # setting golang
         with:
           go-version: ${{ env.GO_VERSION }} # request go version
-      
-      #- name: Get tag name
-      #  id: tag_name
-      #  shell: bash
-      #  run: |
-      #    r=$(echo ${{ github.ref }} | rev | cut -d '/' -f 1 | rev)
-      #    echo "TAG_NAME=$r" >> $GITHUB_OUTPUT
 
-      - name: Build-linux_amd64
+      - name: Build linux_amd64 version
         run: go build -o release/${{ env.APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
-      - name: Create_linux_amd64_md5
+      - name: Create linux_amd64.md5
         run: md5sum release/${{ env.APP_NAME }}_linux_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_amd64.md5
-      - name: Create_linux_amd64_sha256
+      - name: Create linux_amd64.sha256
         run: sha256sum release/${{ env.APP_NAME }}_linux_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_amd64.sha256
 
-      - name: Build-windows_amd64
+      - name: Build windows_amd64 version
         run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_windows_amd64.exe main.go > ${{ github.workspace }}_windows_amd64-BUILDLOG.txt
-      - name: Create_windows_amd64_md5
+      - name: Create windows_amd64.md5
         run: md5sum release/${{ env.APP_NAME }}_windows_amd64.exe | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.md5
-      - name: Create_windows_amd64_sha256
+      - name: Create windows_amd64.sha256
         run: sha256sum release/${{ env.APP_NAME }}_windows_amd64.exe | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.sha256
 
-      - name: Build-drawin_amd64
-        run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_darwin_amd64 main.go >> ${{ github.workspace }}_drawin_amd64-BUILDLOG.txt
-      - name: Create_drawin_amd64_md5
-        run: md5sum release/${{ env.APP_NAME }}_drawin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_drawin_amd64.md5
-      - name: Create_drawin_amd64_sha256
-        run: sha256sum release/${{ env.APP_NAME }}_drawin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_drawin_amd64.sha256
-
-      #- name: Create Release
-      #  uses: svenstaro/upload-release-action@v2
-      #  with:
-      #    repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #    tag: ${{ github.ref }}
-      #    file: release/*
-      #    overwrite: true
-      #    file_glob: true
-      #    body: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
+      - name: Build darwin_amd64 version
+        run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_darwin_amd64 main.go >> ${{ github.workspace }}_darwin_amd64-BUILDLOG.txt
+      - name: Create darwin_amd64.md5
+        run: md5sum release/${{ env.APP_NAME }}_darwin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_darwin_amd64.md5
+      - name: Create darwin_amd64.sha256
+        run: sha256sum release/${{ env.APP_NAME }}_darwin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_darwin_amd64.sha256
 
       - name: Upload files to release
         uses: softprops/action-gh-release@v1
