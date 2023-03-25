@@ -52,9 +52,9 @@ jobs:
       - name: Build-windows_amd64
         run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_windows_amd64.exe main.go > ${{ github.workspace }}_windows_amd64-BUILDLOG.txt
       - name: Create_windows_amd64_md5
-        run: md5sum release/${{ env.APP_NAME }}_windows_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.md5
+        run: md5sum release/${{ env.APP_NAME }}_windows_amd64.exe | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.md5
       - name: Create_windows_amd64_sha256
-        run: sha256sum release/${{ env.APP_NAME }}_windows_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.sha256
+        run: sha256sum release/${{ env.APP_NAME }}_windows_amd64.exe | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.sha256
 
       - name: Build-drawin_amd64
         run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_darwin_amd64 main.go >> ${{ github.workspace }}_drawin_amd64-BUILDLOG.txt
