@@ -7,7 +7,7 @@ name: Build Release
 #      - '*'
 
 on:
-  repository_dispatch:
+  #repository_dispatch:
   workflow_dispatch:
     inputs:
       tags:
@@ -78,6 +78,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ ${{ inputs.tags }}  }}
-          body: "This is ${{ ${{ inputs.tags }}  }} release."
+          tag_name: ${{ inputs.tags }}
+          body: "This is ${{ inputs.tags }} release."
           files: release/*
