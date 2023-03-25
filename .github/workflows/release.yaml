@@ -1,10 +1,19 @@
 # .github/workflows/release.yaml
 name: Build Release
 
+#on:
+#  push:
+#    tags:
+#      - '*'
+
 on:
-  push:
-    tags:
-      - '*'
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'create tags version'
+        required: true
+        type: string
 
 env:
   APP_NAME: hdwallet
@@ -14,7 +23,8 @@ env:
 
 jobs:
   release:
-    if: startsWith(github.ref, 'refs/tags/') # create tags.
+    #if: startsWith(github.ref, 'refs/tags/') # create tags.
+    if: ${{ inputs.print_tags }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,12 +35,12 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }} # request go version
       
-      - name: Get tag name
-        id: tag_name
-        shell: bash
-        run: |
-          r=$(echo ${{ github.ref }} | rev | cut -d '/' -f 1 | rev)
-          echo "TAG_NAME=$r" >> $GITHUB_OUTPUT
+      #- name: Get tag name
+      #  id: tag_name
+      #  shell: bash
+      #  run: |
+      #    r=$(echo ${{ github.ref }} | rev | cut -d '/' -f 1 | rev)
+      #    echo "TAG_NAME=$r" >> $GITHUB_OUTPUT
 
       - name: Build-linux_amd64
         run: go build -o release/${{ env.APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
@@ -68,6 +78,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
-          body: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
+          tag_name: ${{ ${{ inputs.tags }}  }}
+          body: "This is ${{ ${{ inputs.tags }}  }} release."
           files: release/*
