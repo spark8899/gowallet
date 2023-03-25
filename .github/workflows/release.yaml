@@ -69,5 +69,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
-          body_path: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
+          body: "This is ${{ steps.tag_name.outputs.TAG_NAME }} release."
           files: release/*
