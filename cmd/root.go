@@ -19,7 +19,7 @@ func init() {
 
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(genPrivateKeyCmd)
-	rootCmd.AddCommand(getEthAddressCmd)
+	rootCmd.AddCommand(getAddressCmd)
 	rootCmd.AddCommand(getPublicKeyCmd)
 	rootCmd.AddCommand(genMnemonicCmd)
 	rootCmd.AddCommand(getSeedCmd)

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spark8899/gowallet/internal/commonPrivateKey"
@@ -20,8 +21,8 @@ var genPrivateKeyCmd = &cobra.Command{
 	},
 }
 
-var getEthAddressCmd = &cobra.Command{
-	Use:   "getEthAddress",
+var getAddressCmd = &cobra.Command{
+	Use:   "getAddress",
 	Short: "input privateKey and get address",
 	Long:  "this command is get address from privateKey.",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -29,7 +30,11 @@ var getEthAddressCmd = &cobra.Command{
 			fmt.Println("Enter private key is empty")
 			os.Exit(5)
 		}
-		commonPrivateKey.GetEthAddress(privateKey)
+		address, err := commonPrivateKey.AddressHex(privateKey)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(address)
 	},
 }
 
@@ -42,12 +47,16 @@ var getPublicKeyCmd = &cobra.Command{
 			fmt.Println("Enter private key is empty")
 			os.Exit(5)
 		}
-		commonPrivateKey.GetPublicKey(privateKey)
+		publicKey, err := commonPrivateKey.PublicKeyHex(privateKey)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(publicKey)
 	},
 }
 
 func init() {
 	genPrivateKeyCmd.Flags().IntVarP(&number, "num", "n", 1, "generated quantity")
-	getEthAddressCmd.Flags().StringVarP(&privateKey, "key", "k", "", "private key")
+	getAddressCmd.Flags().StringVarP(&privateKey, "key", "k", "", "private key")
 	getPublicKeyCmd.Flags().StringVarP(&privateKey, "key", "k", "", "private key")
 }
