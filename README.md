@@ -4,6 +4,9 @@ golang wallet tools
 # build
 ```
 go build -o gowallet main.go
+
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o gowallet_linux main.go
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o gowallet_win main.go
 ```
 
 # running
