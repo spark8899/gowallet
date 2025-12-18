@@ -17,7 +17,7 @@ on:
 
 env:
   APP_NAME: hdwallet
-  GO_VERSION: 1.20.x
+  GO_VERSION: 1.25.x
   GOCACHE: /home/runner/work/go/pkg/build
   GOPATH: /home/runner/work/go
 
