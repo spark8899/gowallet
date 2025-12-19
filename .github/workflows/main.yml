@@ -1,4 +1,4 @@
-name: hdwallet build and test
+name: gowallet build and test
 
 on:
   push:
