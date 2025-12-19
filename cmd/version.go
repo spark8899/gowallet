@@ -11,6 +11,6 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of gowallet",
 	Long:  `All software has versions. This is gowallet's`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("gowallet v0.9 -- HEAD")
+		fmt.Println("gowallet v1.0.0 -- HEAD")
 	},
 }
