@@ -59,3 +59,10 @@ get path from seed
 ./gowallet getPath -s "efea201152e37883bdabf10b28fdac9c146f80d2e161a544a7079d2ecc4e65948a0d74e47e924f26bf35aaee72b24eb210386bcb1deda70ded202a2b7d1a8c2e" -p "m/44'/60'/0'/0/0"
 0xC49926C4124cEe1cbA0Ea94Ea31a6c12318df947:0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9
 ```
+
+# update pkg
+
+```
+curl -X POST https://proxy.golang.org/github.com/spark8899/gowallet/@v/v1.0.0.info
+curl -X POST https://pkg.go.dev/fetch/github.com/spark8899/gowallet@v1.0.0
+```
