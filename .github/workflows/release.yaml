@@ -28,7 +28,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       # -----------------------
-      # Build Linux version
+      # Build Linux AMD64 version
       - name: Build linux_amd64 version
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
       - name: Create linux_amd64.md5
@@ -37,7 +37,16 @@ jobs:
         run: sha256sum release/${{ env.APP_NAME }}_linux_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_amd64.sha256
 
       # -----------------------
-      # Build Windows version
+      # Build Linux ARM64 version
+      - name: Build linux_arm64 version
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o release/${{ env.APP_NAME }}_linux_arm64 main.go > ${{ github.workspace }}_linux_arm64-BUILDLOG.txt
+      - name: Create linux_arm64.md5
+        run: md5sum release/${{ env.APP_NAME }}_linux_arm64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_arm64.md5
+      - name: Create linux_arm64.sha256
+        run: sha256sum release/${{ env.APP_NAME }}_linux_arm64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_arm64.sha256
+
+      # -----------------------
+      # Build Windows AMD64 version
       - name: Build windows_amd64 version
         run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o release/${{ env.APP_NAME }}_windows_amd64.exe main.go > ${{ github.workspace }}_windows_amd64-BUILDLOG.txt
       - name: Create windows_amd64.md5
@@ -53,7 +62,6 @@ jobs:
         run: md5sum release/${{ env.APP_NAME }}_darwin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_darwin_amd64.md5
       - name: Create darwin_amd64.sha256
         run: sha256sum release/${{ env.APP_NAME }}_darwin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_darwin_amd64.sha256
-
 
       # -----------------------
       # Uploaded to GitHub Release
