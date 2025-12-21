@@ -15,7 +15,7 @@ RELEASE_TAG     = $(RELEASE_VERSION).$(GIT_COUNT).$(GIT_HASH)
 all: start
 
 build:
-	@go build -ldflags "-w -s -X main.VERSION=$(RELEASE_TAG)" -o $(APP_BIN) main.go
+	@go build -ldflags "-w -s -X github.com/spark8899/gowallet/cmd.Version=$(RELEASE_TAG) -X github.com/spark8899/gowallet/cmd.GitCommit=$(GIT_HASH) -X github.com/spark8899/gowallet/cmd.BuildTime=$(NOW)" -o $(APP_BIN) main.go
 
 test:
 	cd ./internal/app/test && go test -v

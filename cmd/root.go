@@ -6,8 +6,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "gowallet",
-	Short: "a wallet tools",
-	Long:  "gowallet is golang wallet tools.",
+	Short: "A comprehensive cryptocurrency wallet tool",
+	Long:  "gowallet is a CLI tool for generating keys, addresses, and mnemonics for various cryptocurrencies.",
 }
 
 func Execute() error {

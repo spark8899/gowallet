@@ -16,9 +16,10 @@ var seedStr string
 var path string
 
 var genMnemonicCmd = &cobra.Command{
-	Use:   "genMnemonic",
-	Short: "generate mnemonic, protocol support: bip39",
-	Long:  "generate mnemonic, protocol support: bip39",
+	Use:     "genMnemonic",
+	Short:   "Generate a BIP39 mnemonic phrase",
+	Long:    "Generate a BIP39 mnemonic phrase. Supported sizes: 12, 15, 18, 21, 24 words.",
+	Example: `  gowallet genMnemonic -s 12`,
 	Run: func(cmd *cobra.Command, args []string) {
 		bitSize := size*11 - size/3
 		mnemonic, err := hdwallet.Bip39GenMnemonic(bitSize)
@@ -30,13 +31,14 @@ var genMnemonicCmd = &cobra.Command{
 }
 
 var getSeedCmd = &cobra.Command{
-	Use:   "getSeed",
-	Short: "get seed from mnemonic, protocol support: bip39",
-	Long:  "get seed from mnemonic, protocol support: bip39",
+	Use:     "getSeed",
+	Short:   "Convert a mnemonic phrase to a deterministic seed",
+	Long:    "Convert a BIP39 mnemonic phrase to a deterministic seed (hex encoded).",
+	Example: `  gowallet getSeed -m "apple banana ... "`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if mnemonicStr == "" {
-			fmt.Println("Enter mnemonic is empty")
-			os.Exit(5)
+			fmt.Println("Error: Mnemonic is required. Use -m flag.")
+			os.Exit(1)
 		}
 		seedBts, err := hdwallet.Bip39MnemonicToSeed(mnemonicStr, "")
 		if err != nil {
@@ -48,16 +50,18 @@ var getSeedCmd = &cobra.Command{
 
 var getPathCmd = &cobra.Command{
 	Use:   "getPath",
-	Short: "get address from hdwallet path",
-	Long:  "get address from hdwallet path",
+	Short: "Derive keys/addresses from a derivation path",
+	Long:  "Derive private key or address from a mnemonic or seed using a derivation path (e.g., m/44'/60'/0'/0/0).",
+	Example: `  gowallet getPath -m "apple banana ..." -p "m/44'/60'/0'/0/0"
+  gowallet getPath -s <seed_hex> -p "m/44'/60'/0'/0/0"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if path == "" {
-			fmt.Println("Enter path is empty")
-			os.Exit(5)
+			fmt.Println("Error: Path is required. Use -p flag.")
+			os.Exit(1)
 		}
 		if seedStr == "" && mnemonicStr == "" {
-			fmt.Println("Enter seed and mnemonicS are empty")
-			os.Exit(5)
+			fmt.Println("Error: Either seed (-s) or mnemonic (-m) is required.")
+			os.Exit(1)
 		}
 
 		if mnemonicStr != "" {
@@ -79,13 +83,14 @@ var getPathCmd = &cobra.Command{
 }
 
 var mnemonicToSeedCmd = &cobra.Command{
-	Use:   "mnToSeed",
-	Short: "seed convert to mnemonic",
-	Long:  "seed convert to mnemonic",
+	Use:     "mnToSeed",
+	Short:   "Generate a mnemonic from a seed (entropy) hex string",
+	Long:    "Generate a BIP39 mnemonic phrase from a provided seed/entropy hex string.",
+	Example: `  gowallet mnToSeed -s <seed_hex>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if seedStr == "" {
-			fmt.Println("Enter seed are empty")
-			os.Exit(5)
+			fmt.Println("Error: Seed is required. Use -s flag")
+			os.Exit(1)
 		}
 
 		mnemonicInfo, err := hdwallet.MnemonicFromSeed(seedStr)

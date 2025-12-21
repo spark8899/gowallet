@@ -13,22 +13,24 @@ var number int
 var privateKey string
 
 var genPrivateKeyCmd = &cobra.Command{
-	Use:   "genPrivateKey",
-	Short: "create generate key",
-	Long:  "this command is create enerate key.",
+	Use:     "genPrivateKey",
+	Short:   "Generate a new random private key",
+	Long:    "Generate a secure, random private key using crypto/rand.",
+	Example: `  gowallet genPrivateKey -n 5`,
 	Run: func(cmd *cobra.Command, args []string) {
 		commonPrivateKey.GetGenerateKey(number)
 	},
 }
 
 var getAddressCmd = &cobra.Command{
-	Use:   "getAddress",
-	Short: "input privateKey and get address",
-	Long:  "this command is get address from privateKey.",
+	Use:     "getAddress",
+	Short:   "Derive a wallet address from a private key",
+	Long:    "Derive a wallet address from a given private key.",
+	Example: `  gowallet getAddress -k <private_key_hex>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if privateKey == "" {
-			fmt.Println("Enter private key is empty")
-			os.Exit(5)
+			fmt.Println("Error: Private key is required. Use -k flag.")
+			os.Exit(1)
 		}
 		address, err := commonPrivateKey.AddressHex(privateKey)
 		if err != nil {
@@ -39,13 +41,14 @@ var getAddressCmd = &cobra.Command{
 }
 
 var getPublicKeyCmd = &cobra.Command{
-	Use:   "getPublicKey",
-	Short: "input privateKey and get PublicKey",
-	Long:  "this command is get public key from privateKey.",
+	Use:     "getPublicKey",
+	Short:   "Derive a public key from a private key",
+	Long:    "Derive a public key from a given private key.",
+	Example: `  gowallet getPublicKey -k <private_key_hex>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if privateKey == "" {
-			fmt.Println("Enter private key is empty")
-			os.Exit(5)
+			fmt.Println("Error: Private key is required. Use -k flag.")
+			os.Exit(1)
 		}
 		publicKey, err := commonPrivateKey.PublicKeyHex(privateKey)
 		if err != nil {

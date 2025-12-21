@@ -6,11 +6,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	Version   = "v1.0.0"
+	GitCommit = "HEAD"
+	BuildTime = "unknown"
+)
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of gowallet",
-	Long:  `All software has versions. This is gowallet's`,
+	Long:  "Print the build version and git commit hash of gowallet.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("gowallet v1.0.0 -- HEAD")
+		fmt.Printf("Version: %s\nGit Commit: %s\nBuild Time: %s\n", Version, GitCommit, BuildTime)
 	},
 }
