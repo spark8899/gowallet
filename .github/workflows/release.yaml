@@ -50,7 +50,6 @@ jobs:
       - name: Build linux_arm64 version
         run: |
           CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }} -extldflags '-static'" -trimpath -o release/${{ env.APP_NAME }}_linux_arm64 main.go > ${{ github.workspace }}_linux_arm64-BUILDLOG.txt
-          strip --strip-all release/${{ env.APP_NAME }}_linux_arm64
       - name: Create linux_arm64.md5
         run: md5sum release/${{ env.APP_NAME }}_linux_arm64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_arm64.md5
       - name: Create linux_arm64.sha256
