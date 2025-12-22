@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"errors"
+	"fmt"
 	"strings"
 
+	"github.com/spark8899/gowallet/internal/security"
 	"github.com/tyler-smith/go-bip39"
 )
 
@@ -24,8 +26,18 @@ func Bip39GenMnemonic(size int) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	//生成助记词
+
+	// Validate entropy quality for security
+	if err := ValidateEntropy(entropyBytes); err != nil {
+		return "", fmt.Errorf("entropy validation failed: %w", err)
+	}
+
+	// Generate mnemonic phrase
 	mnemonic, err := bip39.NewMnemonic(entropyBytes)
+
+	// Clear entropy from memory after use
+	defer security.ZeroBytes(entropyBytes)
+
 	return mnemonic, err
 }
 
@@ -36,7 +48,7 @@ func Bip39MnemonicToSeed(mnemonic string, password string) ([]byte, error) {
 	return bip39.NewSeed(mnemonic, password), nil
 }
 
-// dcr 的助记词跟种子的转换可以互逆，没有遵守 bip39 规范
+// DCR mnemonic and seed conversion is bidirectional and doesn't follow BIP39 standard
 func DcrSeedToMnemonic(seed []byte) string {
 	var buf bytes.Buffer
 	for i, b := range seed {

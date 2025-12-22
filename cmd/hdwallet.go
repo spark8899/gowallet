@@ -42,11 +42,11 @@ var genMnemonicCmd = &cobra.Command{
 	},
 }
 
-var getSeedCmd = &cobra.Command{
-	Use:     "getSeed [mnemonic]",
+var mnToSeedCmd = &cobra.Command{
+	Use:     "mnToSeed [mnemonic]",
 	Short:   "Convert a mnemonic phrase to a deterministic seed",
 	Long:    "Convert a BIP39 mnemonic phrase to a deterministic seed (hex encoded).",
-	Example: `  gowallet getSeed "apple banana ... "`,
+	Example: `  gowallet mnToSeed "apple banana ... "`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			if args[0] == "help" {
@@ -105,11 +105,11 @@ var getPathCmd = &cobra.Command{
 	},
 }
 
-var mnemonicToSeedCmd = &cobra.Command{
-	Use:     "mnToSeed [seed_hex]",
+var seedToMnCmd = &cobra.Command{
+	Use:     "seedToMn [seed_hex]",
 	Short:   "Generate a mnemonic from a seed (entropy) hex string",
 	Long:    "Generate a BIP39 mnemonic phrase from a provided seed/entropy hex string.",
-	Example: `  gowallet mnToSeed <seed_hex>`,
+	Example: `  gowallet seedToMn <seed_hex>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			if args[0] == "help" {
@@ -133,9 +133,9 @@ var mnemonicToSeedCmd = &cobra.Command{
 
 func init() {
 	genMnemonicCmd.Flags().IntVarP(&size, "size", "s", 12, "size is the word number of mnemonic, support: 12, 15, 18, 21, 24")
-	getSeedCmd.Flags().StringVarP(&mnemonicStr, "mnemonic", "m", "", "mnemonic is mnemonic string")
+	mnToSeedCmd.Flags().StringVarP(&mnemonicStr, "mnemonic", "m", "", "mnemonic is mnemonic string")
 	getPathCmd.Flags().StringVarP(&seedStr, "seed", "s", "", "seed is string")
 	getPathCmd.Flags().StringVarP(&path, "path", "p", "", "path is string, For example \"m/44'/60'/0'/0/0\"")
 	getPathCmd.Flags().StringVarP(&mnemonicStr, "mnemonic", "m", "", "mnemonic is mnemonic string")
-	mnemonicToSeedCmd.Flags().StringVarP(&seedStr, "seed", "s", "", "seed is string")
+	seedToMnCmd.Flags().StringVarP(&seedStr, "seed", "s", "", "seed is string")
 }

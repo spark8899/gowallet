@@ -37,7 +37,9 @@ jobs:
       # -----------------------
       # Build Linux AMD64 version
       - name: Build linux_amd64 version
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "${{ env.LDFLAGS }}" -o release/${{ env.APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "${{ env.LDFLAGS }} -extldflags '-static'" -trimpath -o release/${{ env.APP_NAME }}_linux_amd64 main.go > ${{ github.workspace }}_linux_amd64-BUILDLOG.txt
+          strip --strip-all release/${{ env.APP_NAME }}_linux_amd64
       - name: Create linux_amd64.md5
         run: md5sum release/${{ env.APP_NAME }}_linux_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_amd64.md5
       - name: Create linux_amd64.sha256
@@ -46,7 +48,9 @@ jobs:
       # -----------------------
       # Build Linux ARM64 version
       - name: Build linux_arm64 version
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }}" -o release/${{ env.APP_NAME }}_linux_arm64 main.go > ${{ github.workspace }}_linux_arm64-BUILDLOG.txt
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }} -extldflags '-static'" -trimpath -o release/${{ env.APP_NAME }}_linux_arm64 main.go > ${{ github.workspace }}_linux_arm64-BUILDLOG.txt
+          strip --strip-all release/${{ env.APP_NAME }}_linux_arm64
       - name: Create linux_arm64.md5
         run: md5sum release/${{ env.APP_NAME }}_linux_arm64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_linux_arm64.md5
       - name: Create linux_arm64.sha256
@@ -55,7 +59,7 @@ jobs:
       # -----------------------
       # Build Windows AMD64 version
       - name: Build windows_amd64 version
-        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "${{ env.LDFLAGS }}" -o release/${{ env.APP_NAME }}_windows_amd64.exe main.go > ${{ github.workspace }}_windows_amd64-BUILDLOG.txt
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "${{ env.LDFLAGS }}" -trimpath -o release/${{ env.APP_NAME }}_windows_amd64.exe main.go > ${{ github.workspace }}_windows_amd64-BUILDLOG.txt
       - name: Create windows_amd64.md5
         run: md5sum release/${{ env.APP_NAME }}_windows_amd64.exe | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_amd64.md5
       - name: Create windows_amd64.sha256
@@ -64,7 +68,7 @@ jobs:
       # -----------------------
       # Build Windows ARM64 version
       - name: Build windows_arm64 version
-        run: CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }}" -o release/${{ env.APP_NAME }}_windows_arm64.exe main.go > ${{ github.workspace }}_windows_arm64-BUILDLOG.txt
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }}" -trimpath -o release/${{ env.APP_NAME }}_windows_arm64.exe main.go > ${{ github.workspace }}_windows_arm64-BUILDLOG.txt
       - name: Create windows_arm64.md5
         run: md5sum release/${{ env.APP_NAME }}_windows_arm64.exe | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_windows_arm64.md5
       - name: Create windows_arm64.sha256
@@ -73,7 +77,7 @@ jobs:
       # -----------------------
       # Build macOS AMD64 version
       - name: Build darwin_amd64 version
-        run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "${{ env.LDFLAGS }}" -o release/${{ env.APP_NAME }}_darwin_amd64 main.go >> ${{ github.workspace }}_darwin_amd64-BUILDLOG.txt
+        run: CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -ldflags "${{ env.LDFLAGS }}" -trimpath -o release/${{ env.APP_NAME }}_darwin_amd64 main.go >> ${{ github.workspace }}_darwin_amd64-BUILDLOG.txt
       - name: Create darwin_amd64.md5
         run: md5sum release/${{ env.APP_NAME }}_darwin_amd64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_darwin_amd64.md5
       - name: Create darwin_amd64.sha256
@@ -82,7 +86,7 @@ jobs:
       # -----------------------
       # Build macOS ARM64 version
       - name: Build darwin_arm64 version
-        run: CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }}" -o release/${{ env.APP_NAME }}_darwin_arm64 main.go >> ${{ github.workspace }}_darwin_arm64-BUILDLOG.txt
+        run: CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -ldflags "${{ env.LDFLAGS }}" -trimpath -o release/${{ env.APP_NAME }}_darwin_arm64 main.go >> ${{ github.workspace }}_darwin_arm64-BUILDLOG.txt
       - name: Create darwin_arm64.md5
         run: md5sum release/${{ env.APP_NAME }}_darwin_arm64 | cut -d ' ' -f 1 > release/${{ env.APP_NAME }}_darwin_arm64.md5
       - name: Create darwin_arm64.sha256

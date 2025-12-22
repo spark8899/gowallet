@@ -22,7 +22,7 @@ func init() {
 	rootCmd.AddCommand(getAddressCmd)
 	rootCmd.AddCommand(getPublicKeyCmd)
 	rootCmd.AddCommand(genMnemonicCmd)
-	rootCmd.AddCommand(getSeedCmd)
+	rootCmd.AddCommand(mnToSeedCmd)
 	rootCmd.AddCommand(getPathCmd)
-	rootCmd.AddCommand(mnemonicToSeedCmd)
+	rootCmd.AddCommand(seedToMnCmd)
 }

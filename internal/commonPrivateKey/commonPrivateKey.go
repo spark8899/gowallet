@@ -16,30 +16,43 @@ import (
 )
 
 func generateKey() {
-	// from privateKey create publicKey
+	// Generate ECDSA private key
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Validate private key strength
+	// Note: This is a defense-in-depth measure. crypto.GenerateKey() should
+	// always produce valid keys, but we verify anyway for security.
+	if err := ValidatePrivateKey(privateKey); err != nil {
+		log.Fatalf("Generated key failed validation: %v", err)
+	}
+
 	publicKey := privateKey.Public()
 	ecdsaPublicKey, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
 		log.Fatal("failed to cast public key to ECDSA")
 	}
 
-	// get privateKey
+	// Convert private key to hex
 	privateKeyHex := hexutil.Encode(crypto.FromECDSA(privateKey))
-	//fmt.Printf("Private_key: %v\n", privateKeyHex)
 
-	// get PublicKey and address
-	//publicKeyBytes := crypto.FromECDSAPub(ecdsaPublicKey)
+	// Derive address from public key
 	address := crypto.PubkeyToAddress(*ecdsaPublicKey)
-	//fmt.Printf("Address: %v\nPublic key: %v\n", address.Hex(), hexutil.Encode(publicKeyBytes))
 
 	fmt.Printf("%v:%v\n", address.Hex(), privateKeyHex)
 }
 
 func GetGenerateKey(num int) {
+	if num <= 0 {
+		log.Println("Warning: number of keys must be positive, defaulting to 1")
+		num = 1
+	}
+	if num > 1000 {
+		log.Println("Warning: limiting key generation to 1000 keys")
+		num = 1000
+	}
 	for i := 0; i < num; i++ {
 		generateKey()
 	}
@@ -115,7 +128,7 @@ func Address(privateKeyStr string) (common.Address, error) {
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		return common.Address{}, err
+		return common.Address{}, errors.New("failed to cast public key to ECDSA")
 	}
 
 	return crypto.PubkeyToAddress(*publicKeyECDSA), nil

@@ -16,36 +16,36 @@ import (
 func PathFromMnemonic(mnemonic string, pathStr string) (string, error) {
 	var err error
 	if mnemonic == "" {
-		fmt.Println("mnemonic is required")
-		return "mnemonic is required", errors.New("mnemonic is required")
+		return "", errors.New("mnemonic is required")
 	}
 
 	if !bip39.IsMnemonicValid(mnemonic) {
-		fmt.Println("mnemonic is invalid")
-		return "mnemonic is invalid", errors.New("mnemonic is invalid")
+		return "", errors.New("mnemonic is invalid")
+	}
+
+	// Validate derivation path format and security
+	if err := ValidateDerivationPath(pathStr); err != nil {
+		return "", fmt.Errorf("invalid derivation path: %w", err)
 	}
 
 	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
-		fmt.Println("mnemonic to seed err")
-		return "get seed err", err
+		return "", fmt.Errorf("failed to generate seed from mnemonic: %w", err)
 	}
 
 	path, err := accounts.ParseDerivationPath(pathStr)
 	if err != nil {
-		fmt.Println("path str to path error")
-		return "path str to path", err
+		return "", fmt.Errorf("failed to parse derivation path: %w", err)
 	}
 
-	// crate master private key
+	// Create master private key
 	masterKey, err := hdkeychain.NewMaster(seed, &chaincfg.MainNetParams)
 	if err != nil {
-		fmt.Println("Get masterKey error")
-		return "Get masterKey error", err
+		return "", fmt.Errorf("failed to create master key: %w", err)
 	}
 	//fmt.Println("masterKey:", masterKey)
 
-	// derivation path
+	// Derivation path
 	fixIssue172 := true
 	for _, n := range path {
 		if fixIssue172 && masterKey.IsAffectedByIssue172() {
@@ -54,7 +54,7 @@ func PathFromMnemonic(mnemonic string, pathStr string) (string, error) {
 			masterKey, err = masterKey.DeriveNonStandard(n)
 		}
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to derive key at path %d: %w", n, err)
 		}
 	}
 
@@ -62,15 +62,14 @@ func PathFromMnemonic(mnemonic string, pathStr string) (string, error) {
 	privateKey, err := masterKey.ECPrivKey()
 	privateKeyECDSA := privateKey.ToECDSA()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to get EC private key: %w", err)
 	}
 
-	// get eth address
+	// Get Ethereum address from public key
 	publicKey := privateKeyECDSA.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		fmt.Println("Unable to get public key")
-		return "", err
+		return "", errors.New("unable to get public key")
 	}
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 
