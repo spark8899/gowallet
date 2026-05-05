@@ -104,7 +104,7 @@ func TestMnemonicToSeedBip39(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		seed, err := Bip39MnemonicToSeed(test.mnemonic, "")
+		seed, err := Bip39MnemonicToSeed([]byte(test.mnemonic), "")
 		if err != nil {
 			t.Errorf("%v: Bip39MnemonicToSeed err: %v", test.name, err)
 			return

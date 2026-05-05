@@ -65,7 +65,7 @@ func TestPathFromMnemonic(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := PathFromMnemonic(tt.mnemonic, tt.path)
+			result, err := PathFromMnemonic([]byte(tt.mnemonic), tt.path)
 
 			if tt.expectError {
 				if err == nil {
@@ -108,12 +108,12 @@ func TestPathFromMnemonic_Deterministic(t *testing.T) {
 	mnemonic := "close same tongue random ice cave aim input whale salute squirrel vivid"
 	path := "m/44'/60'/0'/0/0"
 
-	result1, err1 := PathFromMnemonic(mnemonic, path)
+	result1, err1 := PathFromMnemonic([]byte(mnemonic), path)
 	if err1 != nil {
 		t.Fatalf("First call failed: %v", err1)
 	}
 
-	result2, err2 := PathFromMnemonic(mnemonic, path)
+	result2, err2 := PathFromMnemonic([]byte(mnemonic), path)
 	if err2 != nil {
 		t.Fatalf("Second call failed: %v", err2)
 	}
@@ -129,12 +129,12 @@ func TestPathFromMnemonic_DifferentPaths(t *testing.T) {
 	path1 := "m/44'/60'/0'/0/0"
 	path2 := "m/44'/60'/0'/0/1"
 
-	result1, err1 := PathFromMnemonic(mnemonic, path1)
+	result1, err1 := PathFromMnemonic([]byte(mnemonic), path1)
 	if err1 != nil {
 		t.Fatalf("Path1 failed: %v", err1)
 	}
 
-	result2, err2 := PathFromMnemonic(mnemonic, path2)
+	result2, err2 := PathFromMnemonic([]byte(mnemonic), path2)
 	if err2 != nil {
 		t.Fatalf("Path2 failed: %v", err2)
 	}

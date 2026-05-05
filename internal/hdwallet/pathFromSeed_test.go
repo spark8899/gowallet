@@ -1,7 +1,7 @@
 package hdwallet
 
 import (
-	"fmt"
+	"encoding/hex"
 	"strings"
 	"testing"
 )
@@ -64,8 +64,14 @@ func TestPathFromSeed(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := PathFromSeed(tt.seedHex, tt.path)
-
+			seed, err := hex.DecodeString(tt.seedHex)
+			if err != nil {
+				if tt.expectError && strings.Contains("seed str to bytes", tt.errorMsg) {
+					return
+				}
+				// If tt.seedHex is empty, hex.DecodeString returns nil, nil
+			}
+			result, err := PathFromSeed(seed, tt.path)
 			if tt.expectError {
 				if err == nil {
 					t.Errorf("Expected error containing '%s', got nil", tt.errorMsg)
@@ -105,14 +111,15 @@ func TestPathFromSeed(t *testing.T) {
 func TestPathFromSeed_Deterministic(t *testing.T) {
 	// Test that the same seed and path always produce the same result
 	seedHex := "126b7f8653ce2b1f05dd78d33c57737df4edf889ee2729338202d164831e2ab43d40d2a26d73739570cf816cb96d766b8d3850258d58c89f7e9901edf13e80a8"
+	seed, _ := hex.DecodeString(seedHex)
 	path := "m/44'/60'/0'/0/0"
 
-	result1, err1 := PathFromSeed(seedHex, path)
+	result1, err1 := PathFromSeed(seed, path)
 	if err1 != nil {
 		t.Fatalf("First call failed: %v", err1)
 	}
 
-	result2, err2 := PathFromSeed(seedHex, path)
+	result2, err2 := PathFromSeed(seed, path)
 	if err2 != nil {
 		t.Fatalf("Second call failed: %v", err2)
 	}
@@ -125,15 +132,16 @@ func TestPathFromSeed_Deterministic(t *testing.T) {
 func TestPathFromSeed_DifferentPaths(t *testing.T) {
 	// Test that different paths produce different results
 	seedHex := "126b7f8653ce2b1f05dd78d33c57737df4edf889ee2729338202d164831e2ab43d40d2a26d73739570cf816cb96d766b8d3850258d58c89f7e9901edf13e80a8"
+	seed, _ := hex.DecodeString(seedHex)
 	path1 := "m/44'/60'/0'/0/0"
 	path2 := "m/44'/60'/0'/0/1"
 
-	result1, err1 := PathFromSeed(seedHex, path1)
+	result1, err1 := PathFromSeed(seed, path1)
 	if err1 != nil {
 		t.Fatalf("Path1 failed: %v", err1)
 	}
 
-	result2, err2 := PathFromSeed(seedHex, path2)
+	result2, err2 := PathFromSeed(seed, path2)
 	if err2 != nil {
 		t.Fatalf("Path2 failed: %v", err2)
 	}
@@ -157,19 +165,18 @@ func TestPathFromSeed_MnemonicConsistency(t *testing.T) {
 	path := "m/44'/60'/0'/0/0"
 
 	// Get result from mnemonic directly
-	resultFromMnemonic, err1 := PathFromMnemonic(mnemonic, path)
+	resultFromMnemonic, err1 := PathFromMnemonic([]byte(mnemonic), path)
 	if err1 != nil {
 		t.Fatalf("PathFromMnemonic failed: %v", err1)
 	}
 
 	// Convert mnemonic to seed then derive path
-	seed, err2 := Bip39MnemonicToSeed(mnemonic, "")
+	seed, err2 := Bip39MnemonicToSeed([]byte(mnemonic), "")
 	if err2 != nil {
 		t.Fatalf("Bip39MnemonicToSeed failed: %v", err2)
 	}
 
-	seedHex := fmt.Sprintf("%x", seed)
-	resultFromSeed, err3 := PathFromSeed(seedHex, path)
+	resultFromSeed, err3 := PathFromSeed(seed, path)
 	if err3 != nil {
 		t.Fatalf("PathFromSeed failed: %v", err3)
 	}
@@ -183,9 +190,10 @@ func TestPathFromSeed_MnemonicConsistency(t *testing.T) {
 // Benchmark for performance testing
 func BenchmarkPathFromSeed(b *testing.B) {
 	seedHex := "126b7f8653ce2b1f05dd78d33c57737df4edf889ee2729338202d164831e2ab43d40d2a26d73739570cf816cb96d766b8d3850258d58c89f7e9901edf13e80a8"
+	seed, _ := hex.DecodeString(seedHex)
 	path := "m/44'/60'/0'/0/0"
 
 	for i := 0; i < b.N; i++ {
-		_, _ = PathFromSeed(seedHex, path)
+		_, _ = PathFromSeed(seed, path)
 	}
 }

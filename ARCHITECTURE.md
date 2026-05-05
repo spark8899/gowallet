@@ -26,7 +26,6 @@ graph TD
         GetPub[getPublicKeyCmd]
         MnToSeed[mnToSeedCmd]
         GetPath[getPathCmd]
-        SeedToMn[seedToMnCmd]
         Version[versionCmd]
         
         Main --> Root
@@ -36,7 +35,6 @@ graph TD
         Root --> GetPub
         Root --> MnToSeed
         Root --> GetPath
-        Root --> SeedToMn
         Root --> Version
     end
 
@@ -54,7 +52,6 @@ graph TD
             MnToSeed[Bip39MnemonicToSeed]
             PathMn[PathFromMnemonic]
             PathSeed[PathFromSeed]
-            MnFromSeed[MnemonicFromSeed]
         end
     end
 
@@ -95,10 +92,9 @@ Responsible for the CLI user experience.
     - `getPublicKey`: Derive public key from private key
 - **`hdwallet.go`**: Commands for Hierarchical Deterministic (HD) wallet operations (BIP39/32/44)
     - `genMnemonic`: Generate BIP39 mnemonic phrases
-    - `mnToSeed`: Convert mnemonic to seed
-    - `getPath`: Derive keys from mnemonic or seed using derivation paths
-    - `seedToMn`: Generate mnemonic from seed/entropy
-- **`version.go`**: Outputs build version, git commit, and build time
+    - mnToSeed: Convert mnemonic to seed
+    - getPath: Derive keys from mnemonic or seed using derivation paths
+    - **version.go**: Outputs build version, git commit, and build time
 
 ### `internal`
 Contains the business logic. Code here is not importable by external projects, ensuring encapsulation.
@@ -159,7 +155,6 @@ go test ./internal/hdwallet -bench=.
 - `internal/hdwallet/mnemonic_test.go`: BIP39 mnemonic tests
 - `internal/hdwallet/pathFromMnemonic_test.go`: HD wallet path derivation
 - `internal/hdwallet/pathFromSeed_test.go`: Seed-based derivation
-- `internal/hdwallet/mnemonicFromSeed_test.go`: Mnemonic generation
 - `cmd/cmd_test.go`: CLI integration tests
 
 ## Build Process

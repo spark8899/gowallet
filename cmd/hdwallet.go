@@ -3,12 +3,12 @@ package cmd
 import (
 	"encoding/hex"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/spark8899/gowallet/internal/hdwallet"
+	"github.com/spark8899/gowallet/internal/security"
 	"github.com/spf13/cobra"
 )
 
@@ -36,7 +36,8 @@ var genMnemonicCmd = &cobra.Command{
 		bitSize := size*11 - size/3
 		mnemonic, err := hdwallet.Bip39GenMnemonic(bitSize)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
 		}
 		fmt.Println(mnemonic)
 	},
@@ -59,9 +60,13 @@ var mnToSeedCmd = &cobra.Command{
 			fmt.Println("Error: Mnemonic is required. Provide it as an argument or use -m flag.")
 			os.Exit(1)
 		}
-		seedBts, err := hdwallet.Bip39MnemonicToSeed(mnemonicStr, "")
+		mnemonicBts := []byte(mnemonicStr)
+		defer security.ZeroBytes(mnemonicBts)
+
+		seedBts, err := hdwallet.Bip39MnemonicToSeed(mnemonicBts, "")
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
 		}
 		fmt.Println(hex.EncodeToString(seedBts))
 	},
@@ -88,46 +93,30 @@ var getPathCmd = &cobra.Command{
 		}
 
 		if mnemonicStr != "" {
-			KeyInfo, err := hdwallet.PathFromMnemonic(mnemonicStr, path)
+			mnemonicBts := []byte(mnemonicStr)
+			defer security.ZeroBytes(mnemonicBts)
+			KeyInfo, err := hdwallet.PathFromMnemonic(mnemonicBts, path)
 			if err != nil {
-				log.Fatal(err)
+				fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+				os.Exit(1)
 			}
 			fmt.Println(KeyInfo)
 		}
 
 		if seedStr != "" {
-			privateKeyInfo, err := hdwallet.PathFromSeed(seedStr, path)
+			seedBts, err := hex.DecodeString(seedStr)
 			if err != nil {
-				log.Fatal(err)
+				fmt.Fprintf(os.Stderr, "Error decoding seed: %v\n", err)
+				os.Exit(1)
+			}
+			defer security.ZeroBytes(seedBts)
+			privateKeyInfo, err := hdwallet.PathFromSeed(seedBts, path)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+				os.Exit(1)
 			}
 			fmt.Println(privateKeyInfo)
 		}
-	},
-}
-
-var seedToMnCmd = &cobra.Command{
-	Use:     "seedToMn [seed_hex]",
-	Short:   "Generate a mnemonic from a seed (entropy) hex string",
-	Long:    "Generate a BIP39 mnemonic phrase from a provided seed/entropy hex string.",
-	Example: `  gowallet seedToMn <seed_hex>`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) > 0 {
-			if args[0] == "help" {
-				cmd.Help()
-				os.Exit(0)
-			}
-			seedStr = args[0]
-		}
-		if seedStr == "" {
-			fmt.Println("Error: Seed is required. Provide it as an argument or use -s flag")
-			os.Exit(1)
-		}
-
-		mnemonicInfo, err := hdwallet.MnemonicFromSeed(seedStr)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(mnemonicInfo)
 	},
 }
 
@@ -137,5 +126,4 @@ func init() {
 	getPathCmd.Flags().StringVarP(&seedStr, "seed", "s", "", "seed is string")
 	getPathCmd.Flags().StringVarP(&path, "path", "p", "", "path is string, For example \"m/44'/60'/0'/0/0\"")
 	getPathCmd.Flags().StringVarP(&mnemonicStr, "mnemonic", "m", "", "mnemonic is mnemonic string")
-	seedToMnCmd.Flags().StringVarP(&seedStr, "seed", "s", "", "seed is string")
 }

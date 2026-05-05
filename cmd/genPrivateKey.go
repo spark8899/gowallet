@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 
 	"github.com/spark8899/gowallet/internal/commonPrivateKey"
+	"github.com/spark8899/gowallet/internal/security"
 	"github.com/spf13/cobra"
 )
 
@@ -50,9 +50,13 @@ var getAddressCmd = &cobra.Command{
 			fmt.Println("Error: Private key is required. Provide it as an argument or use -k flag.")
 			os.Exit(1)
 		}
-		address, err := commonPrivateKey.AddressHex(privateKey)
+		privateKeyBts := []byte(privateKey)
+		defer security.ZeroBytes(privateKeyBts)
+
+		address, err := commonPrivateKey.AddressHex(privateKeyBts)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
 		}
 		fmt.Println(address)
 	},
@@ -75,9 +79,13 @@ var getPublicKeyCmd = &cobra.Command{
 			fmt.Println("Error: Private key is required. Provide it as an argument or use -k flag.")
 			os.Exit(1)
 		}
-		publicKey, err := commonPrivateKey.PublicKeyHex(privateKey)
+		privateKeyBts := []byte(privateKey)
+		defer security.ZeroBytes(privateKeyBts)
+
+		publicKey, err := commonPrivateKey.PublicKeyHex(privateKeyBts)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
 		}
 		fmt.Println(publicKey)
 	},

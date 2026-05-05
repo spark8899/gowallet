@@ -24,5 +24,4 @@ func init() {
 	rootCmd.AddCommand(genMnemonicCmd)
 	rootCmd.AddCommand(mnToSeedCmd)
 	rootCmd.AddCommand(getPathCmd)
-	rootCmd.AddCommand(seedToMnCmd)
 }

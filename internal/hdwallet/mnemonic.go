@@ -41,11 +41,12 @@ func Bip39GenMnemonic(size int) (string, error) {
 	return mnemonic, err
 }
 
-func Bip39MnemonicToSeed(mnemonic string, password string) ([]byte, error) {
-	if !bip39.IsMnemonicValid(mnemonic) {
+func Bip39MnemonicToSeed(mnemonic []byte, password string) ([]byte, error) {
+	mnemonicStr := string(mnemonic)
+	if !bip39.IsMnemonicValid(mnemonicStr) {
 		return nil, errors.New("mnemonic not valid")
 	}
-	return bip39.NewSeed(mnemonic, password), nil
+	return bip39.NewSeed(mnemonicStr, password), nil
 }
 
 // DCR mnemonic and seed conversion is bidirectional and doesn't follow BIP39 standard

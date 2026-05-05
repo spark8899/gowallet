@@ -2,7 +2,7 @@ package hdwallet
 
 import (
 	"crypto/ecdsa"
-	"encoding/hex"
+	"errors"
 	"fmt"
 
 	"github.com/btcsuite/btcd/btcutil/hdkeychain"
@@ -12,12 +12,10 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-func PathFromSeed(seedStr string, pathStr string) (string, error) {
+func PathFromSeed(seed []byte, pathStr string) (string, error) {
 	var err error
-	seed, err := hex.DecodeString(seedStr)
-	if err != nil {
-		fmt.Println("seed str to bytes error")
-		return "seed str to bytes", err
+	if len(seed) == 0 {
+		return "", errors.New("seed is required")
 	}
 
 	path, err := accounts.ParseDerivationPath(pathStr)

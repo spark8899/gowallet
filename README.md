@@ -2,17 +2,19 @@
 
 A comprehensive cryptocurrency wallet CLI tool for generating keys, addresses, and mnemonics for Ethereum and other cryptocurrencies.
 
-[![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat&logo=go)](https://go.dev)
+[![Go Version](https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Features
 
-- 🔑 **Private Key Generation**: Generate secure random private keys using crypto/rand
+- 🔑 **Private Key Generation**: Generate secure random private keys using `crypto/rand`
 - 📝 **BIP39 Mnemonic**: Create and manage mnemonic phrases (12/15/18/21/24 words)
 - 🌳 **HD Wallet**: Support for BIP32/BIP44 hierarchical deterministic wallets
 - 🔄 **Key Derivation**: Derive keys and addresses from derivation paths
 - 🛡️ **Security Validation**: Built-in key strength, entropy quality, and path validation
-- 🧹 **Memory Safety**: Automatic zeroing of sensitive data after use
+- 🧹 **Enhanced Memory Safety**: 
+    - **Byte-based Handling**: Sensitive data (keys, mnemonics) is processed as `[]byte` instead of immutable `string`
+    - **Explicit Zeroing**: Mandatory zeroing of sensitive buffers (`security.ZeroBytes`) and private key objects (`security.ZeroBigInt`) after use
 - ⚡ **Fast & Lightweight**: Zero external runtime dependencies
 - 🎯 **Cross-Platform**: Supports Linux, macOS, and Windows (including ARM)
 

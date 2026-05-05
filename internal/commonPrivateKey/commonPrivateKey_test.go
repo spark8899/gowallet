@@ -13,7 +13,7 @@ import (
 
 func TestPrivateKey(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
-	privateKey, err := PrivateKey(privateKeyStr)
+	privateKey, err := PrivateKey([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -29,7 +29,7 @@ func TestPrivateKey(t *testing.T) {
 
 func TestPrivateKeyBytes(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
-	privateKeyBytes, err := PrivateKeyBytes(privateKeyStr)
+	privateKeyBytes, err := PrivateKeyBytes([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -44,7 +44,7 @@ func TestPrivateKeyBytes(t *testing.T) {
 
 func TestPrivateKeyHex(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
-	privateKeyHex, err := PrivateKeyHex(privateKeyStr)
+	privateKeyHex, err := PrivateKeyHex([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -59,7 +59,7 @@ func TestPrivateKeyHex(t *testing.T) {
 func TestPublicKey(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	publicKeyStr := "0x046005c86a6718f66221713a77073c41291cc3abbfcd03aa4955e9b2b50dbf7f9b6672dad0d46ade61e382f79888a73ea7899d9419becf1d6c9ec2087c1188fa18"
-	publicKey, err := PublicKey(privateKeyStr)
+	publicKey, err := PublicKey([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -76,7 +76,7 @@ func TestPublicKey(t *testing.T) {
 func TestPublicKeyBytes(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	publicKeyStr := "0x046005c86a6718f66221713a77073c41291cc3abbfcd03aa4955e9b2b50dbf7f9b6672dad0d46ade61e382f79888a73ea7899d9419becf1d6c9ec2087c1188fa18"
-	publicKeyBytes, err := PublicKeyBytes(privateKeyStr)
+	publicKeyBytes, err := PublicKeyBytes([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -92,7 +92,7 @@ func TestPublicKeyBytes(t *testing.T) {
 func TestPublicKeyHex(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	publicKeyStr := "0x046005c86a6718f66221713a77073c41291cc3abbfcd03aa4955e9b2b50dbf7f9b6672dad0d46ade61e382f79888a73ea7899d9419becf1d6c9ec2087c1188fa18"
-	publicKeyHex, err := PublicKeyHex(privateKeyStr)
+	publicKeyHex, err := PublicKeyHex([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -107,7 +107,7 @@ func TestPublicKeyHex(t *testing.T) {
 func TestAddress(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	addressStr := "0xC49926C4124cEe1cbA0Ea94Ea31a6c12318df947"
-	address, err := Address(privateKeyStr)
+	address, err := Address([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -123,7 +123,7 @@ func TestAddress(t *testing.T) {
 func TestAddressBytes(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	addressStr := "0xC49926C4124cEe1cbA0Ea94Ea31a6c12318df947"
-	addressBytes, err := AddressBytes(privateKeyStr)
+	addressBytes, err := AddressBytes([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -139,7 +139,7 @@ func TestAddressBytes(t *testing.T) {
 func TestAddressHex(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	addressStr := "0xC49926C4124cEe1cbA0Ea94Ea31a6c12318df947"
-	addressHex, err := AddressHex(privateKeyStr)
+	addressHex, err := AddressHex([]byte(privateKeyStr))
 	if err != nil {
 		t.Error(err)
 	}
@@ -155,7 +155,7 @@ func TestSignHash(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	data := []byte("hello")
 	hash := crypto.Keccak256Hash(data)
-	sig, err := SignHash(privateKeyStr, hash.Bytes())
+	sig, err := SignHash([]byte(privateKeyStr), hash.Bytes())
 	if err != nil {
 		t.Error(err)
 	}
@@ -177,7 +177,7 @@ func TestSignTxEIP155(t *testing.T) {
 
 	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
 
-	signedTx, err := SignTxEIP155(privateKeyStr, tx, big.NewInt(42))
+	signedTx, err := SignTxEIP155([]byte(privateKeyStr), tx, big.NewInt(42))
 	if err != nil {
 		t.Error(err)
 	}
@@ -207,7 +207,7 @@ func TestSignTx(t *testing.T) {
 
 	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
 
-	signedTx, err := SignTx(privateKeyStr, tx, big.NewInt(42))
+	signedTx, err := SignTx([]byte(privateKeyStr), tx, big.NewInt(42))
 	if err != nil {
 		t.Error(err)
 	}
@@ -231,7 +231,7 @@ func TestSignData(t *testing.T) {
 	mimeType := "text/plain"
 	data := []byte("hello world")
 
-	signedData, err := SignData(privateKeyStr, mimeType, data)
+	signedData, err := SignData([]byte(privateKeyStr), mimeType, data)
 	if err != nil {
 		t.Error(err)
 	}
@@ -247,7 +247,7 @@ func TestSignText(t *testing.T) {
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
 	data := []byte("hello world")
 
-	signedTextData, err := SignText(privateKeyStr, data)
+	signedTextData, err := SignText([]byte(privateKeyStr), data)
 	if err != nil {
 		t.Error(err)
 	}

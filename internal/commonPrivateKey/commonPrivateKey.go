@@ -13,6 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/spark8899/gowallet/internal/security"
 )
 
 func generateKey() {
@@ -21,6 +22,7 @@ func generateKey() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	// Validate private key strength
 	// Note: This is a defense-in-depth measure. crypto.GenerateKey() should
@@ -36,7 +38,9 @@ func generateKey() {
 	}
 
 	// Convert private key to hex
-	privateKeyHex := hexutil.Encode(crypto.FromECDSA(privateKey))
+	keyBts := crypto.FromECDSA(privateKey)
+	defer security.ZeroBytes(keyBts)
+	privateKeyHex := hexutil.Encode(keyBts)
 
 	// Derive address from public key
 	address := crypto.PubkeyToAddress(*ecdsaPublicKey)
@@ -58,7 +62,8 @@ func GetGenerateKey(num int) {
 	}
 }
 
-func PrivateKey(privateKeyStr string) (*ecdsa.PrivateKey, error) {
+func PrivateKey(privateKeyHex []byte) (*ecdsa.PrivateKey, error) {
+	privateKeyStr := string(privateKeyHex)
 	privateKeyWithoutPrefix := strings.TrimPrefix(privateKeyStr, "0x")
 	privateKey, err := crypto.HexToECDSA(privateKeyWithoutPrefix)
 	if err != nil {
@@ -68,29 +73,32 @@ func PrivateKey(privateKeyStr string) (*ecdsa.PrivateKey, error) {
 	return privateKey, nil
 }
 
-func PrivateKeyBytes(privateKeyStr string) ([]byte, error) {
-	privateKey, err := PrivateKey(privateKeyStr)
+func PrivateKeyBytes(privateKeyHex []byte) ([]byte, error) {
+	privateKey, err := PrivateKey(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	return crypto.FromECDSA(privateKey), nil
 }
 
-func PrivateKeyHex(privateKeyStr string) (string, error) {
-	privateKeyBytes, err := PrivateKeyBytes(privateKeyStr)
+func PrivateKeyHex(privateKeyHex []byte) (string, error) {
+	privateKeyBytes, err := PrivateKeyBytes(privateKeyHex)
 	if err != nil {
 		return "", err
 	}
+	defer security.ZeroBytes(privateKeyBytes)
 
 	return hexutil.Encode(privateKeyBytes), nil
 }
 
-func PublicKey(privateKeyStr string) (*ecdsa.PublicKey, error) {
-	privateKey, err := PrivateKey(privateKeyStr)
+func PublicKey(privateKeyHex []byte) (*ecdsa.PublicKey, error) {
+	privateKey, err := PrivateKey(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
@@ -101,8 +109,8 @@ func PublicKey(privateKeyStr string) (*ecdsa.PublicKey, error) {
 	return publicKeyECDSA, nil
 }
 
-func PublicKeyBytes(privateKeyStr string) ([]byte, error) {
-	publicKey, err := PublicKey(privateKeyStr)
+func PublicKeyBytes(privateKeyHex []byte) ([]byte, error) {
+	publicKey, err := PublicKey(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
@@ -110,8 +118,8 @@ func PublicKeyBytes(privateKeyStr string) ([]byte, error) {
 	return crypto.FromECDSAPub(publicKey), nil
 }
 
-func PublicKeyHex(privateKeyStr string) (string, error) {
-	publicKeyBytes, err := PublicKeyBytes(privateKeyStr)
+func PublicKeyHex(privateKeyHex []byte) (string, error) {
+	publicKeyBytes, err := PublicKeyBytes(privateKeyHex)
 	if err != nil {
 		return "", err
 	}
@@ -119,11 +127,12 @@ func PublicKeyHex(privateKeyStr string) (string, error) {
 	return hexutil.Encode(publicKeyBytes), nil
 }
 
-func Address(privateKeyStr string) (common.Address, error) {
-	privateKey, err := PrivateKey(privateKeyStr)
+func Address(privateKeyHex []byte) (common.Address, error) {
+	privateKey, err := PrivateKey(privateKeyHex)
 	if err != nil {
 		return common.Address{}, err
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
@@ -134,36 +143,38 @@ func Address(privateKeyStr string) (common.Address, error) {
 	return crypto.PubkeyToAddress(*publicKeyECDSA), nil
 }
 
-func AddressBytes(privateKeyStr string) ([]byte, error) {
-	address, err := Address(privateKeyStr)
+func AddressBytes(privateKeyHex []byte) ([]byte, error) {
+	address, err := Address(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
 	return address.Bytes(), nil
 }
 
-func AddressHex(privateKeyStr string) (string, error) {
-	address, err := Address(privateKeyStr)
+func AddressHex(privateKeyHex []byte) (string, error) {
+	address, err := Address(privateKeyHex)
 	if err != nil {
 		return "", err
 	}
 	return address.Hex(), nil
 }
 
-func SignHash(privateKeyStr string, hash []byte) ([]byte, error) {
-	privateKey, err := PrivateKey(privateKeyStr)
+func SignHash(privateKeyHex []byte, hash []byte) ([]byte, error) {
+	privateKey, err := PrivateKey(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	return crypto.Sign(hash, privateKey)
 }
 
-func SignTxEIP155(privateKeyStr string, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
-	privateKey, err := PrivateKey(privateKeyStr)
+func SignTxEIP155(privateKeyHex []byte, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
+	privateKey, err := PrivateKey(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	signer := types.NewEIP155Signer(chainID)
 	// Sign the transaction and verify the sender to avoid hardware fault surprises
@@ -177,7 +188,7 @@ func SignTxEIP155(privateKeyStr string, tx *types.Transaction, chainID *big.Int)
 		return nil, err
 	}
 
-	address, err := Address(privateKeyStr)
+	address, err := Address(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
@@ -189,11 +200,12 @@ func SignTxEIP155(privateKeyStr string, tx *types.Transaction, chainID *big.Int)
 	return signedTx, nil
 }
 
-func SignTx(privateKeyStr string, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
-	privateKey, err := PrivateKey(privateKeyStr)
+func SignTx(privateKeyHex []byte, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
+	privateKey, err := PrivateKey(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
+	defer security.ZeroBigInt(privateKey.D)
 
 	signer := types.LatestSignerForChainID(chainID)
 
@@ -208,7 +220,7 @@ func SignTx(privateKeyStr string, tx *types.Transaction, chainID *big.Int) (*typ
 		return nil, err
 	}
 
-	address, err := Address(privateKeyStr)
+	address, err := Address(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
@@ -220,10 +232,10 @@ func SignTx(privateKeyStr string, tx *types.Transaction, chainID *big.Int) (*typ
 	return signedTx, nil
 }
 
-func SignData(privateKeyStr string, mimeType string, data []byte) ([]byte, error) {
-	return SignHash(privateKeyStr, crypto.Keccak256(data))
+func SignData(privateKeyHex []byte, mimeType string, data []byte) ([]byte, error) {
+	return SignHash(privateKeyHex, crypto.Keccak256(data))
 }
 
-func SignText(privateKeyStr string, text []byte) ([]byte, error) {
-	return SignHash(privateKeyStr, accounts.TextHash(text))
+func SignText(privateKeyHex []byte, text []byte) ([]byte, error) {
+	return SignHash(privateKeyHex, accounts.TextHash(text))
 }

@@ -10,16 +10,17 @@ import (
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/spark8899/gowallet/internal/security"
 	"github.com/tyler-smith/go-bip39"
 )
-
-func PathFromMnemonic(mnemonic string, pathStr string) (string, error) {
+func PathFromMnemonic(mnemonic []byte, pathStr string) (string, error) {
 	var err error
-	if mnemonic == "" {
+	if len(mnemonic) == 0 {
 		return "", errors.New("mnemonic is required")
 	}
 
-	if !bip39.IsMnemonicValid(mnemonic) {
+	mnemonicStr := string(mnemonic)
+	if !bip39.IsMnemonicValid(mnemonicStr) {
 		return "", errors.New("mnemonic is invalid")
 	}
 
@@ -28,10 +29,11 @@ func PathFromMnemonic(mnemonic string, pathStr string) (string, error) {
 		return "", fmt.Errorf("invalid derivation path: %w", err)
 	}
 
-	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
+	seed, err := bip39.NewSeedWithErrorChecking(mnemonicStr, "")
 	if err != nil {
 		return "", fmt.Errorf("failed to generate seed from mnemonic: %w", err)
 	}
+	defer security.ZeroBytes(seed)
 
 	path, err := accounts.ParseDerivationPath(pathStr)
 	if err != nil {

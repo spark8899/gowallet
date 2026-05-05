@@ -85,7 +85,7 @@ func TestValidatePrivateKey(t *testing.T) {
 func TestValidatePrivateKey_RealKey(t *testing.T) {
 	// Test with a real generated key
 	privateKeyStr := "0x63e21d10fd50155dbba0e7d3f7431a400b84b4c2ac1ee38872f82448fe3ecfb9"
-	privateKey, err := PrivateKey(privateKeyStr)
+	privateKey, err := PrivateKey([]byte(privateKeyStr))
 	if err != nil {
 		t.Fatalf("Failed to create private key: %v", err)
 	}
